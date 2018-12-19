@@ -21,9 +21,35 @@ xpath为：xpath
 点击；
 清空；
 提交；
-输入：
+输入：XXX
+强制等待XXX秒
+切换到默认表单
+切换表单到：XXX
+切换到新窗口，并且关闭老窗口；
+切换到新窗口；
+执行js脚本：XXX；
+确定弹出框；
+取消弹出框；
+获取弹窗框里面的文字；
+获取属性为XXX的文字；
+设置名为：YYY的cookies值为：XXX；
+移动到元素为：XXX
+判断元素XXX被选中。
+判断元素XXX没有被选中。
+获取HTML5 Viedo为：XXX
+获取HTML5 Viedo url为：XXX；
+执行HTML5 Viedo 播放操作；
+执行HTML5 Viedo 停止操作；
+执行HTML5 Viedo 暂停操作；
+选择可见文字为：'XXX'的下拉条；
+选择值为：'XXX'的下拉条；
+选择序号为：'XXX'的下拉条；
+获取变量为：XXX，
 【断言】
-标题应该为：
+标题应该为：XXX。
+标题应该包含：XXX。
+返回值与："XXX"相同。
+返回值："XXX"在返回结果中存在。
 
 '''
 
@@ -32,10 +58,16 @@ xpath为：xpath
 #coding:utf-8
 import re
 import codecs
+#初始化读到的行，把英文;、,、 转换为中文；、，、
+def init(line):
+    line = line.replace(";","；")
+    line = line.replace(",","，")
+    return line
 
 #获取对象
 def getElenument(line):
     mystr =""
+    line = init(line)
     #如果存在“进入网站：url”产生语句“self.driver.get(url)”
     if ("进入网站：" in line):
         url = str(re.findall(r"进入网站：(.+?)；",line))[2:-2]
@@ -43,7 +75,7 @@ def getElenument(line):
     #如果存在“name为：XXX,”产生语句“self.find_element_by_id(XXX)”
     if ("name为：" in line):
         name = str(re.findall(r"name为：(.+?)，",line))[2:-2]
-        mystr = "self.find_element_by_id(\""+name+"\")"
+        mystr = "self.driver.find_element_by_name(\""+name+"\")"
     #如果存在“classname为：XXX,”产生语句“self.driver.find_element_by_class_name(XXX)”
     if ("classname为：" in line):
         name = str(re.findall(r"name为：(.+?)，",line))[2:-2]
@@ -72,10 +104,6 @@ def getElenument(line):
     if ("xpath为：" in line):
         name = str(re.findall(r"xpath为(.+?)，",line))[2:-2]
         mystr = "self.driver.find_element_by_xpath(\""+name+"\")"
-    #如果存在“强制等待X秒；”产生语句“time.sleep(X)”
-    if ("强制等待" in line):
-        sec = str(re.findall(r"强制等待(.+?)秒；",line))[2:-2]
-        mystr = "time.sleep("+sec+")"    
     return action(line,mystr)
 
 #进行操作
@@ -89,19 +117,117 @@ def action(line,mystr):
     #如果存在“提交；”产生语句“.submit()”
     if("提交；" in line):
         mystr = mystr+".submit()"
-    #如果存在“输入：XXX；”产生语句“.send_keys("XXX")”
+     #如果存在“输入：XXX”产生语句“.send_keys("XXX")”
     if("输入：" in line):
-        word = str(re.findall(r"输入：(.+?)；",line))[2:-2]
-        mystr = mystr+".send_keys(\""+word+"\")"
+        name = str(re.findall(r"输入：(.+?)；",line))[2:-2]
+        mystr = mystr+".send_keys(\""+name+"\")"
+    #如果存在“强制等待X秒；”产生语句“time.sleep(X)”
+    if ("强制等待" in line):
+        sec = str(re.findall(r"强制等待(.+?)秒；",line))[2:-2]
+        mystr = "time.sleep("+sec+")"
+    #如果存在“切换表单到：XXX；”产生语句“self.driver.switch_to.frame(XXX)”
+    if ("切换表单到：" in line):
+        name = str(re.findall(r"切换表单到：(.+?)；",line))[2:-2]
+        mystr = "self.driver.switch_to.frame(\""+name+"\")"
+    #如果存在“切换到默认表单；”产生语句“self.driver.switch_to.default_content()”
+    if ("切换到默认表单" in line):
+        mystr = "self.driver.switch_to.default_content()"
+    #如果存在“切换到新窗口，并且关闭老窗口；”产生语句“.....”
+    if("切换到新窗口，并且关闭老窗口；" in line):
+        mystr = mystr+"current_windows = self.driver.current_window_handle\n\t\tall_handles = self.driver.window_handles\n\t\t"
+        mystr = mystr+"for handle in all_handles:\n\t\t\tif handle != current_windows:\n\t\t\t\tself.driver.switch_to.window(handle)\n\t\t\t\tbreak\n\t\t"
+        mystr = mystr+"for handle in all_handles:\n\t\t\tif handle == current_windows:\n\t\t\t\tself.driver.switch_to.window(handle)\n\t\t\t\tself.driver.close()\n\t\t\t\tbreak\n\t\t"
+        mystr = mystr+"for handle in all_handles:\n\t\t\tif handle != current_windows:\n\t\t\t\tself.driver.switch_to.window(handle)\n\t\t\t\tbreak"
+    #如果存在“切换到新窗口；”产生语句“.....”
+    if("切换到新窗口；" in line):
+        mystr = mystr+"current_windows = self.driver.current_window_handle\n\t\tall_handles = self.driver.window_handles\n\t\t"
+        mystr = mystr+"for handle in all_handles:\n\t\t\tif handle != current_windows:\n\t\t\t\tself.driver.switch_to.window(handle)\n\t\t\t\tbreak\n\t\t"
+    #如果存在“执行js脚本：XXX；”产生语句“self.driver.execute_script(XXX)”
+    if("执行js脚本：" in line):
+        name = str(re.findall(r"执行js脚本：(.+?)；",line))[2:-2]
+        mystr = "self.driver.execute_script(\""+name+"\")"
+    #如果存在“确定弹出框；”产生语句“self.driver.switch_to_alert().accept()”
+    if("确定弹出框；" in line):
+        mystr = "self.driver.switch_to_alert().accept()"
+    #如果存在“取消弹出框；”产生语句“self.driver.switch_to_alert().dismiss()”
+    if("取消弹出框；" in line):
+        mystr = "self.driver.switch_to_alert().dismiss()"
+    #如果存在“获取弹窗框里面的文字；”产生语句“text=self.driver.switch_to.alert.text”
+    if("获取弹窗框里面的文字；" in line):
+        mystr = "text=self.driver.switch_to.alert.text"
+    #如果存在“获取属性为XXX的文字；”产生语句“.get_attribute(XXX)”
+    if("获取属性为：" in line):
+        name = str(re.findall(r"获取属性为：(.+?)的文字；",line))[2:-2]
+        mystr = mystr+".get_attribute(\""+name+"\")"
+    #如果存在“设置名为：XXX的cookie，值为：YYY；”产生语句“self.driver.add_cookie({"name":"XXX","value":YYY})”
+    if("设置名为：" in line) and ("cookie，值为：" in line):
+        name = str(re.findall(r"设置名为：(.+?)的",line))[2:-2]
+        cookie = str(re.findall(r"cookie，值为：(.+?)；",line))[2:-2]
+        mystr = "self.driver.add_cookie({\"name\":\""+name+"\",\"value\":"+cookie+"})"
+    #如果存在“判断元素XXX被选中。”产生语句“self.assertTrue(element.is_selected())”
+    if("判断元素" in line) and ("被选中。" in line):
+        mystr = "self.assertTrue("+mystr+".is_selected())"
+    #如果存在“判断元素XXX没有被选中。”产生语句“self.assertTrue(element.is_selected())”
+    if("判断元素" in line) and ("没有被选中。" in line):
+        mystr = "self.assertNotTrue("+mystr+".is_selected())"
+    #如果存在“移动到元素为：XXX；”产生语句“ActionChains(self.driver).move_to_element(XXX).perform()”
+    if("移动到元素为：" in line):
+        mystr = "ActionChains(self.driver).move_to_element("+mystr+").perform()"
+    #如果存在“获取HTML5 Viedo为：XXX；”产生语句“video=element”
+    if("获取HTML5 Viedo为：" in line):
+        mystr = "video="+mystr
+    #如果存在“获取HTML5 Viedo url为：XXX；”产生语句“url=self.driver.execute_script("currentSrc;",video)”
+    if("获取HTML5 Viedo url为：" in line):
+        mystr = "url=self.driver.execute_script(\"currentSrc;\",video)"
+    #如果存在“执行HTML5 Viedo 播放操作；”产生语句“self.driver.execute_script("return arguments[0].play()",video)”
+    if("执行HTML5 Viedo 播放操作；" in line):
+        mystr = "self.driver.execute_script(\"return arguments[0].play()\",video)"
+    #如果存在“执行HTML5 Viedo 停止操作；”产生语句“self.driver.execute_script("return arguments[0].stop()",video)”
+    if("执行HTML5 Viedo 停止操作；" in line):
+        mystr = "self.driver.execute_script(\"return arguments[0].stop()\",video)"
+    #如果存在“执行HTML5 Viedo 暂停操作；”产生语句“self.driver.execute_script("return arguments[0].pause()",video)”
+    if("执行HTML5 Viedo 暂停操作；" in line):
+        mystr = "self.driver.execute_script(\"return arguments[0].pause()\",video)"
+    #如果存在“获取变量为：XXX”产生语句“XXX=element”
+    if("获取变量为：" in line):
+        name = str(re.findall(r"获取变量为：(.+?)，",line))[2:-2]
+        mystr = name+"="+mystr
+    #如果存在“获取下拉条：”产生语句“se=element”
+    if("获取下拉条：" in line):
+        mystr = "se="+mystr
+    #如果存在“选择可见文字为：'XXX'的下拉条；”产生语句“Select(se).select_by_visible_text('XXX')”
+    if("选择可见文字为：" in line):
+        name = str(re.findall(r"选择可见文字为：\'(.+?)\'的下拉条；",line))[2:-2]
+        mystr = "Select(se).select_by_visible_text(\""+name+"\")"
+    #如果存在“选择值为：'XXX'的下拉条；”产生语句“Select(se).select_by_value('XXX')”
+    if("选择值为：XXX的下拉条；" in line):
+        name = str(re.findall(r"选择值为：\'(.+?)\'的下拉条；",line))[2:-2]
+        mystr = "Select(se).select_by_value(\""+name+"\")"
+    #如果存在“选择序号为：'XXX'的下拉条；”产生语句“Select(se).select_by_index(3)”
+    if("选择序号为：XXX的下拉条；" in line):
+        name = str(re.findall(r"选择序号为：\'(.+?)\'的下拉条；",line))[2:-2]
+        mystr = "Select(se).select_by_index("+name+")"
     return mystr
 
 #进行断言
 def myassert(line):
-    #如果存在“标题应该为：”产生语句“.click()”
     mystr =""
+    #如果存在“标题应该为："XXX"。”产生语句“self.assertEqual(XXX,self.driver.title)”
     if("标题应该为：" in line):
-        word = str(re.findall(r"标题应该为：(.+?)。",line))[2:-2]
-        mystr = "self.assertEqual(self.driver.title,\""+word+"\")"
+        word = str(re.findall(r"标题应该为：\"(.+?)\"。",line))[2:-2]
+        mystr = "self.assertEqual(\""+word+"\",self.driver.title)"
+    #如果存在“标题应该包含："XXX"。”产生语句“self.assertIn(XXX,self.driver.title)”
+    if("标题应该包含：" in line):
+        word = str(re.findall(r"标题应该包含：\"(.+?)\"。",line))[2:-2]
+        mystr = "self.assertIn(\""+word+"\",self.driver.title)"
+    #如果存在“返回值与："XXX"相同。“self.assertEqual(XXX,text)”
+    if("返回值与：" in line) and ("相同。" in line):
+        word = str(re.findall(r"返回值与：\"(.+?)\"相同。",line))[2:-2]
+        mystr = "self.assertEqual(\""+word+"\",text)"
+    #如果存在“返回值："XXX"在返回结果中存在。“self.assertIn(XXX,text)”
+    if("返回值与：" in line) and ("在返回结果中存在。" in line):
+        word = str(re.findall(r"返回值与：\"(.+?)\"相同。",line))[2:-2]
+        mystr = "self.assertIn(\""+word+"\",text)"
     return mystr
 
 #读模板文件

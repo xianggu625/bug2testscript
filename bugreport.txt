@@ -1,0 +1,10 @@
+﻿进入网站：http://127.0.0.1:8000；
+id为：id_username，清空；
+id为：id_username，输入：cindy；
+id为：id_password，清空；
+id为：id_password，输入：123456；
+获取变量为：csrftoken，name为：csrfmiddlewaretoken，获取属性为：value的文字；
+设置名为：csrftoken的cookie，值为：csrftoken；
+classname为：form-signin，提交；
+强制等待3秒；
+标题应该为："电子商务系统"。
