@@ -1,0 +1,9 @@
+﻿进入网站“https://www.jd.com/”
+在id为“key”的文本框执行清空操作
+在id为“key”的文本框输入“巧克力”
+在classname为“button”的地方点击按键
+强制等待3秒
+在classname为“p-tag”点击
+强制等待3秒
+切换到新窗口并且关闭老窗口
+标题应该包含“巧克力”
