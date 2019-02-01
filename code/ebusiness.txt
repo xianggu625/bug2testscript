@@ -1,0 +1,10 @@
+﻿进入网站“http://127.0.0.1:8000/”
+在name为“username”的文本框执行清空操作
+在name为“username”的文本框输入“cindy”
+在name为“password”的文本框执行清空操作
+在name为“password”的文本框输入“123456”
+获得名为“csrfmiddlewaretoken”属性为“value”的文字，存储变量为“csrftoken”
+添加cookie，名为“csrftoken”值为变量“csrftoken”
+提交classname为“form-signin”
+强制等待3秒
+标题应该为“电子商务系统”

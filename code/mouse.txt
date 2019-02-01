@@ -1,0 +1,6 @@
+﻿进入网站“https://www.baidu.com”
+在id为“kw”文本框中输入“软件测试”
+在id为“su”按键点击
+移动元素到名为“tj_settingicon”的位置
+在链接文字为“高级搜索”点击
+判断id为“q5_0”被选中

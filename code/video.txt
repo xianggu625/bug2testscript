@@ -1,0 +1,8 @@
+﻿进入网站“http://127.0.0.1:8080/sec/16/index.htm”
+获取HTML5 Viedo id为“video”存储变量为“video”
+执行HTML5 Viedo 播放操作，HTML5 Viedo变量为“video”
+强制等待5秒
+执行HTML5 Viedo 暂停操作，HTML5 Viedo变量为“video”
+强制等待3秒
+执行HTML5 Viedo 播放操作，HTML5 Viedo变量为“video”
+网页路径应该为“http://127.0.0.1:8080/sec/16/index.htm”
