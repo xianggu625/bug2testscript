@@ -1,0 +1,5 @@
+host:localhost
+user:root
+password:knyzh158
+database:zentao
+port:3306
