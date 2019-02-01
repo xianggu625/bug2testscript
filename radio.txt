@@ -1,3 +1,0 @@
-﻿进入网站“http://127.0.0.1:8080/sec/33/index.html”
-点击xpath为“//input[@value='male']”的元素
-判断xpath为“//input[@value='male']”被选中
